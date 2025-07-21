@@ -1,25 +1,30 @@
 import streamlit as st
-import pandas as pd
 import pickle
+import numpy as np
 
-# Load the trained model
-def load_model(path='model.pkl'):
-    with open(path, 'rb') as f:
-        return pickle.load(f)
-
-st.set_page_config(page_title="Weather Predictor")
-st.title("🌤️ Weather Prediction App")
+# Load model
+@st.cache_data
+def load_model():
+    try:
+        with open("weather_model.pkl", "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        st.error("Model file not found. Train and save the model as 'weather_model.pkl'.")
+        return None
 
 model = load_model()
 
-# User inputs
-temperature = st.slider("🌡️ Temperature (°C)", -10, 50, 25)
-humidity = st.slider("💧 Humidity (%)", 0, 100, 50)
+st.title("🌦️ Weather Prediction App")
+st.write("Enter weather parameters below to predict if it will rain.")
 
-# Prepare input for model
-features = pd.DataFrame([[temperature, humidity]], columns=["temperature", "humidity"])
+temperature = st.number_input("Temperature (°C)", value=25)
+humidity = st.number_input("Humidity (%)", value=70)
+wind_speed = st.number_input("Wind Speed (km/h)", value=10)
+pressure = st.number_input("Pressure (hPa)", value=1010)
 
-# Prediction
-if st.button("🔍 Predict Weather"):
-    prediction = model.predict(features)
-    st.success(f"🌈 Predicted Weather: **{prediction[0]}**")
+if st.button("Predict"):
+    if model:
+        features = np.array([[temperature, humidity, wind_speed, pressure]])
+        prediction = model.predict(features)[0]
+        result = "🌧️ Rain predicted!" if prediction == 1 else "☀️ No rain predicted."
+        st.success(result)
