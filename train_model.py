@@ -2,25 +2,21 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 import pickle
 
-# Sample weather dataset
-data = {
-    "temperature": [30, 35, 40, 20, 25, 10, 15, 45],
-    "humidity": [70, 80, 90, 40, 50, 20, 30, 95],
-    "label": ["Rainy", "Rainy", "Rainy", "Clear", "Clear", "Clear", "Clear", "Rainy"]
-}
+# Sample dummy data
+df = pd.DataFrame({
+    'temperature': [30, 22, 35, 18, 40],
+    'humidity': [40, 60, 20, 90, 15],
+    'pressure': [1012, 1015, 1010, 1008, 1020],
+    'wind_speed': [10, 5, 20, 12, 7],
+    'rain': [0, 1, 0, 1, 0]  # Target variable
+})
 
-df = pd.DataFrame(data)
+X = df[['temperature', 'humidity', 'pressure', 'wind_speed']]
+y = df['rain']
 
-# Train with only 2 features
-X = df[["temperature", "humidity"]]
-y = df["label"]
-
-# Train model
 model = LogisticRegression()
 model.fit(X, y)
 
-# Save model
-with open("model.pkl", "wb") as f:
+# Save the model
+with open('model.pkl', 'wb') as f:
     pickle.dump(model, f)
-
-print("✅ Model trained and saved!")
