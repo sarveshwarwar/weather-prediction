@@ -1,25 +1,23 @@
-import streamlit as st
-import pandas as pd
 import pickle
+from sklearn.linear_model import LogisticRegression
+import pandas as pd
 
-# Load the trained model
-def load_model(path='model.pkl'):
-    with open(path, 'rb') as f:
-        return pickle.load(f)
+# Example training data
+data = pd.DataFrame({
+    'temperature': [30, 22, 25, 28],
+    'humidity': [80, 60, 65, 70],
+    'pressure': [1012, 1010, 1011, 1013],
+    'wind': [10, 5, 7, 8],
+    'label': [1, 0, 0, 1]  # 1 = Rainy, 0 = Not Rainy
+})
 
-st.set_page_config(page_title="Weather Predictor")
-st.title("🌤️ Weather Prediction App")
+X = data[['temperature', 'humidity', 'pressure', 'wind']]
+y = data['label']
 
-model = load_model()
+# Train model
+model = LogisticRegression()
+model.fit(X, y)
 
-# User inputs
-temperature = st.slider("🌡️ Temperature (°C)", -10, 50, 25)
-humidity = st.slider("💧 Humidity (%)", 0, 100, 50)
-
-# Prepare input for model
-features = pd.DataFrame([[temperature, humidity]], columns=["temperature", "humidity"])
-
-# Prediction
-if st.button("🔍 Predict Weather"):
-    prediction = model.predict(features)
-    st.success(f"🌈 Predicted Weather: **{prediction[0]}**")
+# Save model
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
