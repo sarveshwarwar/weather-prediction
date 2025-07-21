@@ -14,7 +14,7 @@ data = {
 
 df = pd.DataFrame(data)
 
-# Features and target
+# Features and label
 X = df.drop('rain', axis=1)
 y = df['rain']
 
@@ -25,8 +25,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = LogisticRegression()
 model.fit(X_train, y_train)
 
-# Save model
+# Save the model
 with open('weather_model.pkl', 'wb') as f:
     pickle.dump(model, f)
 
-print("✅ Model trained and saved as weather_model.pkl")
+print("✅ Model trained and saved as 'weather_model.pkl'")
