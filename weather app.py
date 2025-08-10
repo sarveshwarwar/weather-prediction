@@ -1,23 +1,26 @@
+# weather_app.py
 import streamlit as st
 import pickle
 import numpy as np
 
-# Load the model
+# Load the trained model
 with open("weather_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 st.title("🌦️ Weather Prediction App")
 st.write("Enter weather parameters below to predict if it will rain.")
 
-# User inputs
-temperature = st.number_input("Temperature (°C)", min_value=-10, max_value=50, value=25)
-humidity = st.number_input("Humidity (%)", min_value=0, max_value=100, value=70)
-wind_speed = st.number_input("Wind Speed (km/h)", min_value=0, max_value=150, value=10)
-pressure = st.number_input("Pressure (hPa)", min_value=900, max_value=1100, value=1010)
+# Input fields
+temperature = st.number_input("Temperature (°C)", value=25)
+humidity = st.number_input("Humidity (%)", value=70)
+wind_speed = st.number_input("Wind Speed (km/h)", value=10)
+pressure = st.number_input("Pressure (hPa)", value=1010)
 
-# Prediction
+# Predict button
 if st.button("Predict"):
     features = np.array([[temperature, humidity, wind_speed, pressure]])
-    prediction = model.predict(features)
-    result = "🌧️ Rain" if prediction[0] == 1 else "☀️ No Rain"
-    st.success(f"Prediction: {result}")
+    prediction = model.predict(features)[0]
+    if prediction == 1:
+        st.success("🌧️ It will rain.")
+    else:
+        st.info("☀️ No rain expected.")
